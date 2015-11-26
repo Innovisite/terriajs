@@ -23,6 +23,8 @@ var specJSName = 'TerriaJS-specs.js';
 var sourceGlob = ['./lib/**/*.js', '!./lib/ThirdParty/**/*.js'];
 var testGlob = ['./test/**/*.js'];
 
+var lang = 'fr';
+
 
 // Create the build directory, because browserify flips out if the directory that might
 // contain an existing source map doesn't exist.
@@ -31,12 +33,19 @@ if (!fs.existsSync('wwwroot/build')) {
 }
 
 gulp.task('gettext-compile-html', function () {
-    if (!fs.existsSync('lib/Views/translated')) {
-	fs.mkdirSync('lib/Views/translated');
+    if (!fs.existsSync('lib/Views/template/translated')) {
+	fs.mkdirSync('lib/Views/template/translated');
     }
-    return gulp.src('./lib/Views/*.html')
+    return gulp.src('./lib/Views/template/*.html')
                    .pipe(gettext_export_html('po/*.po'))
-                   .pipe(gulp.dest('./lib/Views/translated'))
+                   .pipe(gulp.dest('./lib/Views/template/translated'))
+                   .on('end', function copy() {
+		       var trFiles = glob.sync('./lib/Views/template/translated/' + lang + '/*.html');
+		       for(var i in trFiles) {
+			   var targetFile = trFiles[i].replace('/template/translated/' + lang, '');
+			   fs.writeFileSync(targetFile, fs.readFileSync(trFiles[i]));
+		       }
+		   });
 });
 
 gulp.task('build-specs', ['prepare-cesium'], function() {
