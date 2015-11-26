@@ -17,7 +17,6 @@ var source = require('vinyl-source-stream');
 var watchify = require('watchify');
 var resolve = require('resolve');
 var child_exec = require('child_process').exec;  // child_process is built in to node
-var gettext_export_html = require('gulp-angular-gettext-export-html');
 
 var specJSName = 'TerriaJS-specs.js';
 var sourceGlob = ['./lib/**/*.js', '!./lib/ThirdParty/**/*.js'];
@@ -31,22 +30,6 @@ var lang = 'fr';
 if (!fs.existsSync('wwwroot/build')) {
     fs.mkdirSync('wwwroot/build');
 }
-
-gulp.task('gettext-compile-html', function () {
-    if (!fs.existsSync('lib/Views/template/translated')) {
-	fs.mkdirSync('lib/Views/template/translated');
-    }
-    return gulp.src('./lib/Views/template/*.html')
-                   .pipe(gettext_export_html('po/*.po'))
-                   .pipe(gulp.dest('./lib/Views/template/translated'))
-                   .on('end', function copy() {
-		       var trFiles = glob.sync('./lib/Views/template/translated/' + lang + '/*.html');
-		       for(var i in trFiles) {
-			   var targetFile = trFiles[i].replace('/template/translated/' + lang, '');
-			   fs.writeFileSync(targetFile, fs.readFileSync(trFiles[i]));
-		       }
-		   });
-});
 
 gulp.task('build-specs', ['prepare-cesium'], function() {
     return build(specJSName, glob.sync(testGlob), false);
