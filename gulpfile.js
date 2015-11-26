@@ -35,7 +35,7 @@ gulp.task('build-specs', ['prepare-cesium'], function() {
     return build(specJSName, glob.sync(testGlob), false);
 });
 
-gulp.task('build', ['gettext-compile-html', 'build-specs']);
+gulp.task('build', ['build-specs']);
 
 gulp.task('release-specs', ['prepare-cesium'], function() {
     return build(specJSName, glob.sync(testGlob), true);

@@ -49,8 +49,7 @@
     "vinyl-transform": "^1.0.0",
     "watchify": "^3.1.1",
     "yargs": "^3.7.2",
-    "sinon": "^1.17.2",
-    "gulp-angular-gettext-export-html": "^0.0.2"
+    "sinon": "^1.17.2"
   },
   "scripts": {
     "prepublish": "bash -c \"if [ ! -d \"./wwwroot/build\" ]; then gulp prepare-cesium; fi\"",
