@@ -50,14 +50,14 @@
             </div>
             <div class="now-viewing-item-details" data-bind="visible: isLegendVisible">
                 <div class="now-viewing-action-menu">
-                    <button class="now-viewing-action clickable" data-bind="click: zoomToAndUseClock, attr: {tabindex: $root.isActive ? 0 : -1 }" title="Change the map view to show the full extent of this data item.">Zoom To</button>
+                    <button class="now-viewing-action clickable" data-bind="click: zoomToAndUseClock, attr: {tabindex: $root.isActive ? 0 : -1 }" title="Change the map view to show the full extent of this data item.">Zoomer vers</button>
                     <!-- ko if: showsInfo -->
                     <button class="now-viewing-action clickable" data-bind="click: $root.showInfo.bind($root), attr: {  tabindex: $root.isActive ? 0 : -1 }" title="Display information about this data item.">Info</button>
                     <!-- /ko -->
                     <!-- ko foreach: $root.getItemControls($data) -->
                     <button class="now-viewing-action clickable" data-bind="click: activate, text: text, attr: { title: name, tabindex: $root.isActive ? 0 : -1 }"></button>
                     <!-- /ko -->
-                    <button class="now-viewing-action clickable" data-bind="click: toggleEnabled, attr: {  tabindex: $root.isActive ? 0 : -1 }" title="Remove this data item from the Now Viewing panel and from the map.">Remove</button>
+                    <button class="now-viewing-action clickable" data-bind="click: toggleEnabled, attr: {  tabindex: $root.isActive ? 0 : -1 }" title="Supprimer cet élément du panneau de Visualisation et de la cartep.">Supprimer</button>
                 </div>
 
                 <div class="now-viewing-section" data-bind="visible: isLoading">
