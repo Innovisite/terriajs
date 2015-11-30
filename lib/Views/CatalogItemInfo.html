@@ -47,7 +47,7 @@
 
             <!-- ko if: !catalogItem.hasDescription -->
             <div class="catalog-item-info-section">
-                <div class="catalog-item-info-description">Please contact the provider of this data for more information, including information about usage rights and constraints.</div>
+                <div class="catalog-item-info-description">Pour plus d'informations, veuillez contacter le fournisseur de ces données, ceci comprends également les droits d'utilisations.</div>
             </div>
             <!-- /ko -->
 
@@ -65,7 +65,7 @@
 
             <!-- ko if: catalogItem.dataCustodian -->
             <div class="catalog-item-info-section" data-bind="if: catalogItem.dataCustodian && catalogItem.dataCustodian.length > 0">
-                <h2>Data Custodian</h2>
+                <h2>Fournisseur des données</h2>
                 <div class="catalog-item-info-description" data-bind="markdown: catalogItem.dataCustodian"></div>
             </div>
             <!-- /ko -->
@@ -73,45 +73,45 @@
             <div class="catalog-item-info-section" data-bind="if: catalogItem.url">
                 <h2><span data-bind="text: catalogItem.typeName"></span> URL</h2>
                 <p class="catalog-item-info-description" data-bind="if: catalogItem.type === 'wms'">
-                    This is a <a href="https://en.wikipedia.org/wiki/Web_Map_Service" target="_blank">WMS service</a>, which generates map images on request. It can be used in GIS software with this URL:
+                    Ceci est un <a href="https://en.wikipedia.org/wiki/Web_Map_Service" target="_blank">service WMS</a>, qui génère des images sur demande. Il peut être utilisé dans certains logiciels GIS avec l'URL suivante:
                 </p>
                 <p class="catalog-item-info-description" data-bind="if: catalogItem.type === 'wfs'">
-                    This is a <a href="https://en.wikipedia.org/wiki/Web_Feature_Service" target="_blank">WFS service</a>, which transfers raw spatial data on request. It can be used in GIS software with this URL:
+                    Ceci est un <a href="https://en.wikipedia.org/wiki/Web_Feature_Service" target="_blank">service WFS</a>, qui fournit des données spatiales brutes sur demande. Il peut être utilisé dans certains logiciels GIS avec l'URL suivante:
                 </p>
 
                 <input class="catalog-item-info-baseUrl" readonly type="text" data-bind="value: catalogItem.url" size="80" onclick="this.select();" />
                 <p class="catalog-item-info-description" data-bind="if: catalogItem.type === 'wms'">
-                    Layer name:
+                    Nom de la couche:
                     <span class="catalog-item-info-tech-attributes" data-bind="text: catalogItem.layers"></span>
                 </p>
                 <p class="catalog-item-info-description" data-bind="if: catalogItem.type === 'wfs'">
-                    Type names:
+                    Nom des types:
                     <span class="catalog-item-info-tech-attributes" data-bind="text: catalogItem.typeNames"></span>
                 </p>
             </div>
             <div class="catalog-item-info-section" data-bind="if: catalogItem.metadataUrl">
-                <h2>Metadata URL</h2>
+                <h2>Métadonnées de l'URL</h2>
                 <a class="catalog-item-info-description" data-bind="attr: { href: catalogItem.metadataUrl }, text: catalogItem.metadataUrl" target="_blank"></a>
             </div>
             <div class="catalog-item-info-section" data-bind="if: catalogItem.dataUrlType === 'wfs' || catalogItem.dataUrlType === 'wfs-complete'">
-                <h2>Data URL</h2>
+                <h2>Données de l'URL</h2>
                 <div class="catalog-item-info-description">
-                    Use the link below to download the data.  See the
-                    <a href="http://docs.geoserver.org/latest/en/user/services/wfs/reference.html" target="_blank">Web Feature Service (WFS) documentation</a>
-                    for more information on customising URL query parameters.
+                    Utilisez le lien ce-dessous pour télécharger les données.  Consultez la
+                    <a href="https://fr.wikipedia.org/wiki/Web_Map_Service" target="_blank">documentation du <i>Web Feature Service</i> (WFS) </a>
+                    pour plus d'informations notamment sur la manière de personaliser les paramètres de requête dans l'URL.
                     <div><a data-bind="attr: { href: catalogItem.dataUrl }, text: catalogItem.dataUrl" target="_blank"></a></div>
                 </div>
             </div>
             <div class="catalog-item-info-section" data-bind="if: catalogItem.dataUrlType === 'direct'">
-                <h2>Data URL</h2>
+                <h2>Données de l'URL</h2>
                 <div class="catalog-item-info-description">
-                    Use the link below to download data directly.
+                    Utilisez le lien ce-dessous pour télécharger les données.
                     <div><a data-bind="attr: { href: catalogItem.dataUrl }, text: catalogItem.dataUrl" target="_blank"></a></div>
                 </div>
             </div>
             <div class="catalog-item-info-section">
                 <div class="catalog-item-info-details-heading" data-bind="click: toggleShowDataDetails">
-                    <button class="catalog-item-info-details-label">Data Details</button>
+                    <button class="catalog-item-info-details-label">Détails des données</button>
                     <div class="catalog-item-info-details-expand-button-holder">
                         <button href="#" class="catalog-item-info-details-expand-button" data-bind="cesiumSvgPath: { path: showDataDetails ? $root.svgArrowDown : $root.svgArrowRight, width: 32, height: 32 }"></button>
                     </div>
@@ -137,7 +137,7 @@
             </div>
             <div class="catalog-item-info-section">
                 <div class="catalog-item-info-details-heading" data-bind="click: toggleShowServiceDetails">
-                    <button class="catalog-item-info-details-label">Service Details</button>
+                    <button class="catalog-item-info-details-label">Détails du service</button>
                     <div class="catalog-item-info-details-expand-button-holder">
                         <button class="catalog-item-info-details-expand-button" data-bind="cesiumSvgPath: { path: showServiceDetails ? $root.svgArrowDown : $root.svgArrowRight, width: 32, height: 32 }"></button>
                     </div>

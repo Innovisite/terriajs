@@ -6,15 +6,15 @@
     <!-- /ko -->
 
     <!-- ko if: !$root.urlIsImage($data) -->
-    <a class="now-viewing-legend-text" data-bind="attr: { href: $data }" target="_blank">Open legend in a separate tab</a>
+    <a class="now-viewing-legend-text" data-bind="attr: { href: $data }" target="_blank">Ouvrir la légende dans une autre tabulation</a>
     <!-- /ko -->
 </div>
 
 <div data-bind="if: !proxiedLegendUrls || proxiedLegendUrls.length === 0">
     <!-- ko if: catalogMember.type !== 'abs-itt' -->
-    <div class="now-viewing-legend-text">No legend available for this data item.</div>
+    <div class="now-viewing-legend-text">Il n'y a pas de légende disponible pour cet élément.</div>
     <!-- /ko -->
     <!-- ko if: catalogMember.type === 'abs-itt' -->
-    <div class="now-viewing-legend-text">Select at least one code in each data area.</div>
+    <div class="now-viewing-legend-text">Selectionner au moins un code pour chaque zone de données.</div>
     <!-- /ko -->
 </div>

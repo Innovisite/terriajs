@@ -2,52 +2,53 @@
     <div class="add-data-panel no-focus-outline" data-bind="hasFocus: true" tabindex="0" aria-hidden ='false'>
         <div class="modal-header">
             <button class="modal-close-button" data-bind="click: close">&times;</button>
-            <h1>Add data</h1>
+            <h1>Ajouter des données</h1>
         </div>
         <div class="add-data-content">
             <p>
-                Use this panel to add data to the map from your local system or from elsewhere on the web.
+                Utilisez ce panneau pour ajouter des données à la carte depuis votre ordinateur ou le Web.
             </p>
             <p>
-                Data added in this way is not saved or made visible to others unless you explicitly share it by using the Share panel.
+                Les données ajoutées ce cette manière ne sont pas conservées et ne sont pas visibles depuis d'autres navigateurs sauf en utilisant la fonctionalité
+		Partager.
             </p>
             <form class="add-data-form" data-bind="submit: addUrl">
-                <h2>Step 1</h2>
+                <h2>Etape 1</h2>
                 <label class="add-data-content-type">
-                    Select the type of file or web service to add:
+                    Sélectionnez le format du fichier ou du service Web à ajouter:
                     <select class="add-data-content-type-select" data-bind="value: dataType">
-                        <option value="auto">Auto-detect (recommended)</option>
+                        <option value="auto">Détection-Auto (recommendé)</option>
                         <option value="wms-getCapabilities">Web Map Service (WMS) Server</option>
                         <option value="wmts-getCapabilities">Web Map Tile Service (WMTS) Server</option>
                         <option value="wfs-getCapabilities">Web Feature Service (WFS) Server</option>
                         <option value="esri-group">Esri ArcGIS Server</option>
                         <option value="open-street-map">Open Street Map Server</option>
                         <option value="geojson">GeoJSON</option>
-                        <option value="kml">KML or KMZ</option>
+                        <option value="kml">KML ou KMZ</option>
                         <option value="csv">CSV</option>
                         <option value="czml">CZML</option>
                         <option value="gpx">GPX</option>
-                        <option value="other">Other (use conversion service)</option>
+                        <option value="other">Autres (à travers un service de convertion)</option>
                     </select>
                 </label>
 
-                <h2>Step 2</h2>
-                <p class=add-data-browse-link data-bind="click: selectFileToUpload">Browse to select a local data file to upload</p>
+                <h2>Etape 2</h2>
+                <p class=add-data-browse-link data-bind="click: selectFileToUpload">Choisissez un fichier depuis votre ordinateur</p>
                 <input type="file" style="display: none;" id="add-data-panel-upload-file" data-bind="event: { change: addUploadedFile }" />
 
-                <p><strong>- OR -</strong></p>
+                <p><strong>- OU -</strong></p>
 
-                Enter the URL of the data file or web service:
+                Entrez l'URL du fichier de données ou du service Web:
                 <div class="add-data-url-input-holder">
                     <div class="input-group">
                         <input class="add-data-url-input" type="text" placeholder="e.g. http://data.gov.au/geoserver/wms" data-bind="value: url" />
                         <span class="input-group-btn">
-                          <button class="add-data-url-button" type="submit">Add</button>
+                          <button class="add-data-url-button" type="submit">Ajouter</button>
                         </span>
                     </div>
 
                 <div class="add-data-tip">
-                    <strong>TIP:</strong> you can also drag data files directly onto the map.
+                    <strong>INFO:</strong> vous pouvez aussi glisser-déposer vos fichiers de données directement sur la carte.
                 </div>
             </form>
         </div>
