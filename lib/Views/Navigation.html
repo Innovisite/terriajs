@@ -1,10 +1,10 @@
-<div class="compass" title="Drag outer ring: rotate view.
-Drag inner gyroscope: free orbit.
-Double-click: reset view.
-TIP: You can also free orbit by holding the CTRL key and dragging the map." data-bind="visible: showCompass, event: { mousedown: handleMouseDown, dblclick: handleDoubleClick }">
+<div class="compass" title="Déplacement sur l'anneau extérieur: rotation de la vue.
+Déplacement du gyroscope: Orbite libre.
+Double-clic: réinitialiser la vue.
+INFO: Vous pouvez changer librement l'orbite en tenant la touche CTRL appuyée tout en vous déplaçant sur la carte." data-bind="visible: showCompass, event: { mousedown: handleMouseDown, dblclick: handleDoubleClick }">
     <div class="compass-outer-ring-background"></div>
     <div class="compass-rotation-marker" data-bind="visible: isOrbiting, style: { transform: 'rotate(-' + orbitCursorAngle + 'rad)', '-webkit-transform': 'rotate(-' + orbitCursorAngle + 'rad)', opacity: orbitCursorOpacity }, cesiumSvgPath: { path: svgCompassRotationMarker, width: 145, height: 145 }"></div>
-    <div class="compass-outer-ring" title="Click and drag to rotate the camera" data-bind="style: { transform: 'rotate(-' + heading + 'rad)', '-webkit-transform': 'rotate(-' + heading + 'rad)' }, cesiumSvgPath: { path: svgCompassOuterRing, width: 145, height: 145 }"></div>
+    <div class="compass-outer-ring" title="Cliquer et glisser pour tourner la vue" data-bind="style: { transform: 'rotate(-' + heading + 'rad)', '-webkit-transform': 'rotate(-' + heading + 'rad)' }, cesiumSvgPath: { path: svgCompassOuterRing, width: 145, height: 145 }"></div>
     <div class="compass-gyro-background"></div>
     <div class="compass-gyro" data-bind="cesiumSvgPath: { path: svgCompassGyro, width: 145, height: 145 }, css: { 'compass-gyro-active': isOrbiting }"></div>
 </div>
