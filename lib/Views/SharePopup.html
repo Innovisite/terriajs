@@ -1,36 +1,53 @@
 <div class="modal-background" data-bind="click: closeIfClickOnBackground">
-    <div class="share-popup no-focus-outline" data-bind="hasFocus: true" tabindex="0" aria-hidden ='false'>
-        <div class="modal-header">
-            <button class="modal-close-button" data-bind="click: close">&times;</button>
-            <h1 data-bind="text: title"></h1>
-        </div>
-        <div class="share-popup-content">
-            <div class="share-popup-image">
-                <img data-bind="attr: { src: imageUrl }" height="300" />
-            </div>
-            <div class="share-popup-right">
-                <div class="share-popup-label" data-bind="visible: itemsSkippedBecauseTheyHaveLocalData.length > 0">
-                  Les sources de données suivantes ne sont PAS partageable car elles font références à des données présentes sur votre ordinateur.
-                  Pour partager ces données, vous devez les publier sur un serveur Web et les ajouter en utilisant l'URL au lieu de glisser-déposer le 
-		  fichier local.
-                    <ul data-bind="foreach: itemsSkippedBecauseTheyHaveLocalData">
-                        <li data-bind="text: name"></li>
-                    </ul>
-                </div>
-                <div class="share-popup-label">
-                    Pour <strong>copier</strong> dans le presse-papier, cliquez sur le lien ci-dessous et presser CTRL+C ou &#8984;+C:
-                    <input readonly type="text" data-bind="value: url" size="100" onclick="this.select();" />
-                </div>
-                <div class="share-popup-label">
-                  <strong>Copiez</strong> le code ci-dessous pour incorporer cette carte dans une page HTML:
-                    <input readonly type="text" data-bind="value: embedCode" size="100" onclick="this.select();" />
-                </div>
-                <div>
-                    <label class="share-popup-checkbox" data-bind="visible: enableShortenUrl">
-                        <input type="checkbox" data-bind="checked: shortenUrl" />Obtenez une URL plus courte en utilisant un service Web
-                    </label>
-                </div>
-            </div>
-        </div>
+  <div class="share-popup no-focus-outline" data-bind="hasFocus: true" tabindex="0" aria-hidden ='false'>
+    <div class="modal-header">
+      <button class="modal-close-button" data-bind="click: close">&times;</button>
+      <h1 data-bind="text: title"></h1>
     </div>
+    <div class="share-popup-content">
+      <div class="share-popup-label">
+	<label class="add-data-content-type">
+	  Format de la capture d'écran:
+	  <select class="add-data-content-select-type" 
+		  data-bind="value: formatCapture, event: {change: updateCapture}">
+	    <option value="full">Original</option>
+	    <option value="shirt">Portrait</option>
+	  </select>
+	</label>
+      </div>
+      <div class="share-popup-image">
+        <img data-bind="attr: { src: imageUrl }" height="300" />
+      </div>
+      <div>
+	<label class="share-popup-label" data-bind="visible: enableRapanui">
+	  <p>Pour m'aider à développer ce site, vous pouvez acheter un T-Shirt chez un partenaire.
+	    Une partie des revenus (15%) me sera reversée.</p>
+	  <img src="images/buy.png" data-bind="click: print" height="20" style="cursor: pointer;"></img>
+	</label>
+      </div>
+      <div class="share-popup-right">
+        <div class="share-popup-label" data-bind="visible: itemsSkippedBecauseTheyHaveLocalData.length > 0">
+          Les sources de données suivantes ne sont PAS partageable car elles font références à des données présentes sur votre ordinateur.
+          Pour partager ces données, vous devez les publier sur un serveur Web et les ajouter en utilisant l'URL au lieu de glisser-déposer le 
+	  fichier local.
+          <ul data-bind="foreach: itemsSkippedBecauseTheyHaveLocalData">
+            <li data-bind="text: name"></li>
+          </ul>
+        </div>
+        <div class="share-popup-label">
+          Pour <strong>copier</strong> dans le presse-papier, cliquez sur le lien ci-dessous et presser CTRL+C ou &#8984;+C:
+          <input readonly type="text" data-bind="value: url" size="100" onclick="this.select();" />
+        </div>
+        <div class="share-popup-label">
+          <strong>Copiez</strong> le code ci-dessous pour incorporer cette carte dans une page HTML:
+          <input readonly type="text" data-bind="value: embedCode" size="100" onclick="this.select();" />
+        </div>
+        <div>
+          <label class="share-popup-checkbox" data-bind="visible: enableShortenUrl">
+            <input type="checkbox" data-bind="checked: shortenUrl" />Obtenez une URL plus courte en utilisant un service Web
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
