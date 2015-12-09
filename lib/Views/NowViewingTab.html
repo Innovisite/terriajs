@@ -30,7 +30,7 @@
 
 <div class="now-viewing">
     <div class="now-viewing-toolbar no-focus-outline" data-bind = "hasFocus: panelHasFocus, attr: {  tabindex: isActive ? 0 : -1 }">
-        <button class="now-viewing-clear-all clickable" data-bind="click: nowViewing.removeAll.bind(nowViewing), attr: {  tabindex: isActive ? 0 : -1 }">Tout Supprimer</button>
+        <button class="now-viewing-clear-all clickable" data-bind="click: nowViewing.removeAll.bind(nowViewing), attr: {  tabindex: isActive ? 0 : -1 }">@<<Remove All>>@</button>
     </div>
 
     <div class="now-viewing-list" data-bind="foreach: nowViewing.items">
@@ -50,14 +50,14 @@
             </div>
             <div class="now-viewing-item-details" data-bind="visible: isLegendVisible">
                 <div class="now-viewing-action-menu">
-                    <button class="now-viewing-action clickable" data-bind="click: zoomToAndUseClock, attr: {tabindex: $root.isActive ? 0 : -1 }" title="Déplace la vue de la carte afin d'englober l'ensemble des éléments de cette source de données.">Zoomer vers</button>
+                    <button class="now-viewing-action clickable" data-bind="click: zoomToAndUseClock, attr: {tabindex: $root.isActive ? 0 : -1 }" title="Déplace la vue de la carte afin d'englober l'ensemble des éléments de cette source de données.">@<<Zoom To>>@</button>
                     <!-- ko if: showsInfo -->
                     <button class="now-viewing-action clickable" data-bind="click: $root.showInfo.bind($root), attr: {  tabindex: $root.isActive ? 0 : -1 }" title="Affichage les informations sur cette élément.">Info</button>
                     <!-- /ko -->
                     <!-- ko foreach: $root.getItemControls($data) -->
                     <button class="now-viewing-action clickable" data-bind="click: activate, text: text, attr: { title: name, tabindex: $root.isActive ? 0 : -1 }"></button>
                     <!-- /ko -->
-                    <button class="now-viewing-action clickable" data-bind="click: toggleEnabled, attr: {  tabindex: $root.isActive ? 0 : -1 }" title="Supprimer cet élément du panneau de Visualisation et de la cartep.">Supprimer</button>
+                    <button class="now-viewing-action clickable" data-bind="click: toggleEnabled, attr: {  tabindex: $root.isActive ? 0 : -1 }" title="Supprimer cet élément du panneau de Visualisation et de la cartep.">@<<Remove>>@</button>
                 </div>
 
                 <div class="now-viewing-section" data-bind="visible: isLoading">
