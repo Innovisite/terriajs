@@ -17,6 +17,7 @@ var source = require('vinyl-source-stream');
 var watchify = require('watchify');
 var resolve = require('resolve');
 var child_exec = require('child_process').exec;  // child_process is built in to node
+var gulpTranslate = require('gulp-gettext-static-tags');
 
 var specJSName = 'TerriaJS-specs.js';
 var sourceGlob = ['./lib/**/*.js', '!./lib/ThirdParty/**/*.js'];
@@ -93,7 +94,8 @@ function bundle(name, bundler, minify, catchErrors) {
 
     result = result
         .pipe(source(name))
-        .pipe(buffer());
+        .pipe(buffer())
+	.pipe(gulpTranslate('po/fr.po'));
 
     if (minify) {
         // Minify the combined source.

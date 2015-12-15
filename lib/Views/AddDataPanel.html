@@ -38,7 +38,7 @@
 
                 <p><strong>- OU -</strong></p>
 
-                Entrez l'URL du fichier de données ou du service Web:
+                @<<ADD_URL>>@
                 <div class="add-data-url-input-holder">
                     <div class="input-group">
                         <input class="add-data-url-input" type="text" placeholder="example https://download.data.grandlyon.com/wms/grandlyon" data-bind="value: url" />
@@ -46,9 +46,11 @@
                           <button class="add-data-url-button" type="submit">Ajouter</button>
                         </span>
                     </div>
-
                 <div class="add-data-tip">
-                    <strong>INFO:</strong> vous pouvez aussi glisser-déposer vos fichiers de données directement sur la carte.
+                  @<<ADD_INFO_PROXY>>@
+                </div>
+                <div class="add-data-tip">
+                    @<<ADD_INFO_FILE>>@
                 </div>
             </form>
         </div>
