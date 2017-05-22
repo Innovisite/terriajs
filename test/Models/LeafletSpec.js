@@ -54,7 +54,7 @@ describe('Leaflet Model', function() {
     }
 
     describe('should trigger a tileLoadProgressEvent', function() {
-        ['tileloadstart', 'tileload', 'loaded'].forEach(function(event) {
+        ['tileloadstart', 'tileload', 'load'].forEach(function(event) {
             it('on ' + event, function() {
                 initLeaflet();
 
@@ -73,25 +73,22 @@ describe('Leaflet Model', function() {
     it('should trigger a tileLoadProgressEvent with the total number of tiles to be loaded for all layers', function() {
         initLeaflet();
 
-        layers[0]._tilesToLoad = 4;
-        layers[1]._tilesToLoad = 3;
+        layers[0]._tiles = {
+            1: {loaded: undefined},
+            2: {loaded: undefined},
+            a: {loaded: +new Date()}, // This is how Leaflet marks loaded tiles
+            b: {loaded: undefined}
+        };
+        layers[1]._tiles = {
+            3: {loaded: +new Date()},
+            4: {loaded: undefined},
+            c: {loaded: +new Date()},
+            d: {loaded: undefined}
+        };
 
         layers[1].fire('tileload');
 
-        // We're looking for 6 because Leaflet decrements _tilesToLoad AFTER the event fires.
-        expect(terria.tileLoadProgressEvent.raiseEvent).toHaveBeenCalledWith(6, 6);
-    });
-
-    it('shouldn\'t trigger anything if the _tilesToLoad private API gets removed', function() {
-        map.on('layeradd', function(evt) {
-            delete evt.layer._tilesToLoad;
-        });
-
-        initLeaflet();
-
-        layers[1].fire('tileload');
-
-        expect(terria.tileLoadProgressEvent.raiseEvent).not.toHaveBeenCalled();
+        expect(terria.tileLoadProgressEvent.raiseEvent).toHaveBeenCalledWith(5, 5);
     });
 
     describe('should change the max', function() {
@@ -103,28 +100,32 @@ describe('Leaflet Model', function() {
             changeTileLoadingCount(8);
             changeTileLoadingCount(2);
 
-            expect(terria.tileLoadProgressEvent.raiseEvent.calls.mostRecent().args).toEqual([1, 7]);
+            expect(terria.tileLoadProgressEvent.raiseEvent.calls.mostRecent().args).toEqual([2, 8]);
         });
 
-        it('to 0 when loading tile count reaches 1', function() {
-            // Once again, 1 instead of 0 because the _tilesToLoad count doesn't reach 0 until after the event's fired.
+        it('to 0 when loading tile count reaches 0', function() {
             initLeaflet();
 
             changeTileLoadingCount(3);
             changeTileLoadingCount(6);
             changeTileLoadingCount(8);
-            changeTileLoadingCount(1);
+            changeTileLoadingCount(0);
 
             expect(terria.tileLoadProgressEvent.raiseEvent.calls.mostRecent().args).toEqual([0, 0]);
 
             changeTileLoadingCount(3);
 
-            expect(terria.tileLoadProgressEvent.raiseEvent.calls.mostRecent().args).toEqual([2, 2]);
+            expect(terria.tileLoadProgressEvent.raiseEvent.calls.mostRecent().args).toEqual([3, 3]);
         });
 
         function changeTileLoadingCount(count) {
-            layers[0]._tilesToLoad = count;
-            layers[1]._tilesToLoad = 0;
+            var tiles = {};
+            // Add loading tiles
+            for (var i = 0; i < count; i++) {
+                tiles['tile '+i] = {loaded: undefined};
+            }
+            layers[0]._tiles = tiles;
+            layers[1]._tiles = {};
             layers[0].fire('tileload');
         }
     });
@@ -260,11 +261,11 @@ describe('Leaflet Model', function() {
 
                 it('includes vector features with click events both before and after the map click event', function(done) {
                     // vector and map clicks can come in any order.
-                    leaflet.scene.featureClicked.raiseEvent(vectorFeature1);
+                    leaflet.scene.featureClicked.raiseEvent(vectorFeature1, { latlng: latlng });
                     click({
                         latlng: latlng
                     });
-                    leaflet.scene.featureClicked.raiseEvent(vectorFeature2);
+                    leaflet.scene.featureClicked.raiseEvent(vectorFeature2, { latlng: latlng });
 
                     finishPickingPromise();
 
@@ -277,15 +278,15 @@ describe('Leaflet Model', function() {
                 });
 
                 it('resets the picked vector features if a subsequent map click is made', function(done) {
-                    leaflet.scene.featureClicked.raiseEvent(vectorFeature1);
+                    leaflet.scene.featureClicked.raiseEvent(vectorFeature1, { latlng: latlng });
                     click({
                         latlng: latlng
                     });
-                    leaflet.scene.featureClicked.raiseEvent(vectorFeature2);
+                    leaflet.scene.featureClicked.raiseEvent(vectorFeature2, { latlng: latlng });
 
                     // The reset happens in a runLater, which a second click will always come behind in a browser,
                     // but this isn't guaranteed in unit tests because they're just two setTimeouts racing each other,
-                    // so give this a healthy 500ms delay to make sure it comes in behind the 0ms delay in Leaflet.js.
+                    // so give this a healthy 50ms delay to make sure it comes in behind the 0ms delay in Leaflet.js.
                     setTimeout(function() {
                         click({
                             latlng: latlng
@@ -295,7 +296,7 @@ describe('Leaflet Model', function() {
                             expect(terria.pickedFeatures.features.length).toBe(3);
                             expect(terria.pickedFeatures.features[0].name).toBe('1');
                         }).then(done).otherwise(done.fail);
-                    }, 500);
+                    }, 50);
                 });
             });
         });

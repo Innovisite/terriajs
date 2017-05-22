@@ -4,7 +4,6 @@
 var loadText = require('terriajs-cesium/Source/Core/loadText');
 var TableDataSource = require('../../lib/Models/TableDataSource');
 var TableStyle = require('../../lib/Models/TableStyle');
-var VarType = require('../../lib/Map/VarType');
 
 
 describe('TableDataSource', function() {
@@ -36,7 +35,7 @@ describe('TableDataSource', function() {
     it('sets the clock when there is an active date column', function(done) {
         loadText('/test/csv/lat_long_enum_moving_date.csv').then(function(text) {
             tableDataSource.loadFromCsv(text);
-            tableDataSource.tableStructure.activeTimeColumn = tableDataSource.tableStructure.columnsByType[VarType.TIME][0];
+            tableDataSource.tableStructure.setActiveTimeColumn();
             expect(tableDataSource.clock).toBeDefined();
         }).then(done).otherwise(done.fail);
     });
@@ -54,6 +53,20 @@ describe('TableDataSource', function() {
             expect(tableDataSource.tableStructure.columns[0].values).not.toEqual(tableDataSource.tableStructure.columns[1].values);
             // expect the first two features to have different scales (line above ensures they have different values)
             expect(features[0].point.pixelSize.getValue()).not.toEqual(features[1].point.pixelSize.getValue());
+        }).then(done).otherwise(done.fail);
+    });
+
+    it('handles moving point csvs', function(done) {
+        tableDataSource.tableStructure.idColumnNames = ['id'];
+        loadText('/test/csv/lat_lon_enum_date_id.csv').then(function(text) {
+            tableDataSource.loadFromCsv(text); // at this point, there's no active time column, so we'll see 13 features, one per row.
+            var features = tableDataSource.entities.values;
+            expect(features.length).toEqual(13);
+            tableDataSource.tableStructure.setActiveTimeColumn();
+            tableDataSource.tableStructure.columns[5].isActive = true; // Just to trigger the feature update process
+            expect(tableDataSource.clock).toBeDefined();
+            features = tableDataSource.entities.values;
+            expect(features.length).toEqual(4);
         }).then(done).otherwise(done.fail);
     });
 

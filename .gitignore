@@ -2,12 +2,13 @@ docs/
 node_modules/
 .idea/
 build/
-doc/
 error.log
 output.log
 npm-debug.log
 .DS_Store
 terria.lib.js
-
-# added by GitSavvy
+terriajs-server.log
+terriajs.pid
+/wwwroot/doc/
 /wwwroot/schema/
+/wwwroot/user-guide/

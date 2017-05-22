@@ -1,0 +1,29 @@
+@import '~terriajs-variables';
+
+.timeline {
+  display: table;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+}
+
+.text-row {
+  display: table-row;
+  color: #fff;
+  font-family: $font-base;
+  font-size: $font-size-mid-small;
+}
+
+.text-cell {
+  display: table-cell;
+}
+
+.time {
+  padding-left: 15px;
+}
+
+.controlsRow {
+  display: table-row;
+}
+

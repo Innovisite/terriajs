@@ -13,6 +13,7 @@ var ImageryProviderHooks = require('../../lib/Map/ImageryProviderHooks');
 var loadAndStubTextResources = require('../Utility/loadAndStubTextResources');
 var TableStyle = require('../../lib/Models/TableStyle');
 var Terria = require('../../lib/Models/Terria');
+var TimeInterval = require('terriajs-cesium/Source/Core/TimeInterval');
 var VarType = require('../../lib/Map/VarType');
 
 var greenTableStyle = new TableStyle({
@@ -195,7 +196,8 @@ describe('CsvCatalogItem with lat and lon', function() {
             var tableStructure = csvItem.dataSource.tableStructure;
             var latColumn = tableStructure.columnsByType[VarType.LAT][0];
             var lonColumn = tableStructure.columnsByType[VarType.LON][0];
-            expect(tableStructure.columns[0].values.length).toBe(7);
+            // There are 7 lines after the header, but only 4 are non-blank.
+            expect(tableStructure.columns[0].values.length).toBe(4);
             expect(latColumn.minimumValue).toBeLessThan(-30);
             expect(lonColumn.minimumValue).toBeGreaterThan(150);
         }).otherwise(fail).then(done);
@@ -215,6 +217,16 @@ describe('CsvCatalogItem with lat and lon', function() {
         });
         csvItem.load().then(function() {
             expect(csvItem.dataSource.tableStructure.activeItems[0].name).toBe('val');
+        }).otherwise(fail).then(done);
+    });
+
+    it('does not set an active variable to dataVariable if null', function(done) {
+        csvItem.url = 'test/csv/lat_lon_enum_val.csv';
+        csvItem._tableStyle = new TableStyle({
+            dataVariable: null
+        });
+        csvItem.load().then(function() {
+            expect(csvItem.dataSource.tableStructure.activeItems.length).toEqual(0);
         }).otherwise(fail).then(done);
     });
 
@@ -241,12 +253,11 @@ describe('CsvCatalogItem with lat and lon', function() {
     it('supports dates', function(done) {
         csvItem.url = 'test/csv/lat_long_enum_moving_date.csv';
         csvItem.load().then(function() {
-            var j = JulianDate.fromIso8601;
             var source = csvItem.dataSource;
             expect(source.tableStructure.activeTimeColumn.name).toEqual('date');
             expect(source.tableStructure.columns[0].values.length).toEqual(13);
             expect(source.tableStructure.columnsByType[VarType.TIME].length).toEqual(1);
-            expect(source.tableStructure.columnsByType[VarType.TIME][0].julianDates[0]).toEqual(j('2015-08-01'));
+            expect(source.tableStructure.columnsByType[VarType.TIME][0].julianDates[0]).toEqual(JulianDate.fromIso8601('2015-08-01'));
             // Test that an entity exists at the expected dates.
             var features = source.entities.values;
             var featureDates = features.map(getPropertiesDate);
@@ -255,7 +266,7 @@ describe('CsvCatalogItem with lat and lon', function() {
             var earlyFeature = features[featureDates.indexOf('2015-08-01')];
             // The date '2015-08-01' appears to be interpreted as starting at midnight in the local time zone (at least on Chrome).
             // Eg. in Sydney summer, JulianDate.toIso8601(earlyFeature.availability.start) returns "2015-07-31T14:00:00Z".
-            expect(earlyFeature.availability.contains(j('2015-08-01'))).toBe(true);
+            expect(TimeInterval.contains(earlyFeature.availability, JulianDate.fromIso8601('2015-08-01'))).toBe(true);
             // Also test the duration of the interval is just under one day (the time between input rows).
             var durationInSeconds = JulianDate.secondsDifference(earlyFeature.availability.stop, earlyFeature.availability.start);
             expect(durationInSeconds).toBeGreaterThan(23 * 3600);  // more than 23 hours
@@ -272,7 +283,7 @@ describe('CsvCatalogItem with lat and lon', function() {
             var features = csvItem.dataSource.entities.values;
             var featureDates = features.map(getPropertiesDate);
             var earlyFeature = features[featureDates.indexOf('2015-08-01')];
-            expect(earlyFeature.availability.contains(JulianDate.fromIso8601('2015-08-01T12:00:00Z'))).toBe(true);
+            expect(TimeInterval.contains(earlyFeature.availability, JulianDate.fromIso8601('2015-08-01T12:00:00Z'))).toBe(true);
             var durationInSeconds = JulianDate.secondsDifference(earlyFeature.availability.stop, earlyFeature.availability.start);
             expect(durationInSeconds).toEqual(sevenDaysInMinutes * 60);
         }).otherwise(fail).then(done);
@@ -283,11 +294,10 @@ describe('CsvCatalogItem with lat and lon', function() {
         // Could delete, or change it to test something more useful.
         csvItem.url = 'test/csv/lat_lon_enum_moving_date_unsorted.csv';
         csvItem.load().then(function() {
-            var j = JulianDate.fromIso8601;
             var source = csvItem.dataSource;
             expect(source.tableStructure.columns[0].values.length).toEqual(13);
             expect(source.tableStructure.columnsByType[VarType.TIME].length).toEqual(1);
-            expect(source.tableStructure.columnsByType[VarType.TIME][0].julianDates[0]).toEqual(j('2015-08-05'));
+            // expect(source.tableStructure.columnsByType[VarType.TIME][0].julianDates[0]).toEqual(JulianDate.fromIso8601('2015-08-05'));
             // Test that an entity exists at the expected dates.
             var features = source.entities.values;
             var featureDates = features.map(getPropertiesDate);
@@ -296,11 +306,43 @@ describe('CsvCatalogItem with lat and lon', function() {
             var earlyFeature = features[featureDates.indexOf('2015-08-01')];
             // The date '2015-08-01' appears to be interpreted as starting at midnight in the local time zone (at least on Chrome).
             // Eg. in Sydney summer, JulianDate.toIso8601(earlyFeature.availability.start) returns "2015-07-31T14:00:00Z".
-            expect(earlyFeature.availability.contains(j('2015-08-01'))).toBe(true);
+            expect(TimeInterval.contains(earlyFeature.availability, JulianDate.fromIso8601('2015-08-01'))).toBe(true);
             // Also test the duration of the interval is just under one day (the time between input rows).
             var durationInSeconds = JulianDate.secondsDifference(earlyFeature.availability.stop, earlyFeature.availability.start);
             expect(durationInSeconds).toBeGreaterThan(23 * 3600);  // more than 23 hours
             expect(durationInSeconds).toBeLessThan(24 * 3600);  // but less than 24 hours
+        }).otherwise(fail).then(done);
+    });
+
+    it('supports moving-point csvs with id column by default', function(done) {
+        csvItem.url = 'test/csv/lat_lon_enum_date_id.csv';
+        csvItem.load().then(function() {
+            var features = csvItem.dataSource.entities.values;
+            expect(features.length).toEqual(4); // There are 4 features A, B, C and D; does not equal the 13 rows in the file.
+            var featureA = features.filter(function(feature) { return feature.name === 'feature A'; })[0];
+            // FeatureA has rows for 1,2,4,5,6th of August. But it should still be available on the 3rd.
+            expect(TimeInterval.contains(featureA.availability, JulianDate.fromIso8601('2015-08-02'))).toBe(true);
+            expect(TimeInterval.contains(featureA.availability, JulianDate.fromIso8601('2015-08-03'))).toBe(true);
+            expect(TimeInterval.contains(featureA.availability, JulianDate.fromIso8601('2015-08-04'))).toBe(true);
+            expect(TimeInterval.contains(featureA.availability, JulianDate.fromIso8601('2015-08-08'))).toBe(false);
+        }).otherwise(fail).then(done);
+    });
+
+    it('supports overriding moving-point csvs with id column using null', function(done) {
+        csvItem.url = 'test/csv/lat_lon_enum_date_id.csv';
+        csvItem.idColumns = null;
+        csvItem.load().then(function() {
+            var features = csvItem.dataSource.entities.values;
+            expect(features.length).toEqual(13); // There are 13 rows in the file.
+        }).otherwise(fail).then(done);
+    });
+
+    it('supports overriding moving-point csvs with id column using []', function(done) {
+        csvItem.url = 'test/csv/lat_lon_enum_date_id.csv';
+        csvItem.idColumns = [];
+        csvItem.load().then(function() {
+            var features = csvItem.dataSource.entities.values;
+            expect(features.length).toEqual(13); // There are 13 rows in the file.
         }).otherwise(fail).then(done);
     });
 
@@ -476,25 +518,71 @@ describe('CsvCatalogItem with lat and lon', function() {
         }).otherwise(fail).then(done);
     });
 
-    it('replaces enum tail with "Other" in the legend', function(done) {
+    it('when no column selected, colors with non-null color', function(done) {
+        csvItem.url = 'test/csv/lat_lon_enum_val.csv';
+        csvItem._tableStyle = new TableStyle({
+            dataVariable: null,
+            nullColor: '#000000'
+        });
+        var nullColor = new Color(0, 0, 0, 1);
+        csvItem.load().then(function() {
+            expect(featureColor(csvItem, 1)).not.toEqual(nullColor);
+        }).otherwise(fail).then(done);
+    });
+
+    it('replaces enum tail with "X other values" in the legend', function(done) {
         csvItem.url = 'test/csv/lat_lon_enum_lots.csv';
         csvItem._tableStyle = new TableStyle({colorBins: 9});
         csvItem.load().then(function() {
             expect(csvItem.legendUrl).toBeDefined();
             var url = csvItem.legendUrl.url;
-            expect(url).toContain('Other');
+            expect(url).toContain('2 other values');
             expect(url).not.toContain('unicorns');
             expect(url).toContain('guinea pigs');
         }).otherwise(fail).then(done);
     });
 
-    it('does not replace enum tail with Other if it fits', function(done) {
+    it('does not replace enum tail with "other values" if it fits', function(done) {
         csvItem.url = 'test/csv/lat_lon_enum_lots2.csv';
         csvItem._tableStyle = new TableStyle({colorBins: 9});
         csvItem.load().then(function() {
             expect(csvItem.legendUrl).toBeDefined();
-            expect(csvItem.legendUrl.url).not.toContain('Other');
+            expect(csvItem.legendUrl.url).not.toContain('other values');
             expect(csvItem.legendUrl.url).toContain('turtles');
+        }).otherwise(fail).then(done);
+    });
+
+    it('honors colorBins property when it is less than the number of colors in the palette', function(done) {
+        csvItem.url = 'test/csv/lat_lon_enum_lots.csv';
+        csvItem._tableStyle = new TableStyle({colorBins: 3});
+        csvItem.load().then(function() {
+            expect(csvItem.legendUrl).toBeDefined();
+            var url = csvItem.legendUrl.url;
+            expect(url).toContain('8 other values');
+            expect(url).toContain('cats');
+            expect(url).toContain('dogs');
+        }).otherwise(fail).then(done);
+    });
+
+    it('displays a "XX values" legend when colorBinMethod=cycle and there are more unique values than color bins', function(done) {
+        csvItem.url = 'test/csv/lat_lon_enum_lots.csv';
+        csvItem._tableStyle = new TableStyle({colorBins: 9, colorBinMethod: 'cycle'});
+        csvItem.load().then(function() {
+            expect(csvItem.legendUrl).toBeDefined();
+            var url = csvItem.legendUrl.url;
+            expect(url).toContain('10 values');
+            expect(url).not.toContain('dogs');
+        }).otherwise(fail).then(done);
+    });
+
+    it('displays a normal legend when colorBinMethod=cycle but there are less unique values than color bins', function(done) {
+        csvItem.url = 'test/csv/lat_lon_enum_lots.csv';
+        csvItem._tableStyle = new TableStyle({colorBins: 15, colorBinMethod: 'cycle'});
+        csvItem.load().then(function() {
+            expect(csvItem.legendUrl).toBeDefined();
+            var url = csvItem.legendUrl.url;
+            expect(url).not.toContain('values');
+            expect(url).toContain('dogs');
         }).otherwise(fail).then(done);
     });
 
@@ -605,7 +693,7 @@ describe('CsvCatalogItem with lat and lon', function() {
 
 // eg. use as entities.map(getPropertiesDate) to just get the dates of the entities.
 function getPropertiesDate(obj) {
-    return obj.properties.date;
+    return obj.properties.date.getValue();
 }
 
 // eg. use as regions.map(getId) to just get the ids of the regions.
@@ -619,9 +707,9 @@ describe('CsvCatalogItem with region mapping', function() {
     var csvItem;
     beforeEach(function() {
         terria = new Terria({
-            baseUrl: './',
-            regionMappingDefinitionsUrl: 'test/csv/regionMapping.json'
+            baseUrl: './'
         });
+        terria.configParameters.regionMappingDefinitionsUrl = 'test/csv/regionMapping.json';
         csvItem = new CsvCatalogItem(terria);
 
         // Instead of directly inspecting the recoloring function (which is a private and inaccessible variable),
@@ -632,6 +720,10 @@ describe('CsvCatalogItem with region mapping', function() {
         // Also, for feature detection, spy on this call; the second argument is the regionImageryProvider.
         // This unfortunately makes the test depend on an implementation detail.
         spyOn(ImageryLayerCatalogItem, 'enableLayer');
+
+        // loadAndStubTextResources(done, [
+        //     terria.configParameters.regionMappingDefinitionsUrl
+        // ]).then(done).otherwise(done.fail);
     });
 
     it('does not think a lat-lon csv has regions', function(done) {
@@ -654,7 +746,7 @@ describe('CsvCatalogItem with region mapping', function() {
             var regionDetails = csvItem.regionMapping.regionDetails;
             expect(regionDetails).toBeDefined();
             var regionDetail = regionDetails[0];
-            expect(regionDetail.column.name).toEqual('lga_code');
+            expect(regionDetail.columnName).toEqual('lga_code');
             expect(regionDetail.regionProvider.regionType).toEqual('LGA');
             expect(csvItem.legendUrl).toBeDefined();
         }).otherwise(fail).then(done);
@@ -691,6 +783,38 @@ describe('CsvCatalogItem with region mapping', function() {
             expect(recolorFunction(regionNames.indexOf('greater geelong'))).not.toEqual([0, 0, 0, 0]); // And that the color is not all zeros.
             expect(recolorFunction(regionNames.indexOf('sydney'))[0]).toBeDefined(); // Test that at least one rgba component is defined.
             expect(recolorFunction(regionNames.indexOf('sydney'))).not.toEqual([0, 0, 0, 0]); // And that the color is not all zeros.
+        }).otherwise(fail).then(done);
+    });
+
+    it('matches mapped region column names', function(done) {
+        csvItem.updateFromJson({
+            data: 'nothing,value\n31000,1',
+            tableStyle: {
+                columns: {
+                    'nothing': {
+                        name: 'lga_code'
+                    }
+                }
+            }
+        });
+        csvItem.load().then(function() {
+            expect(csvItem.regionMapping.regionDetails).toBeDefined();
+        }).otherwise(fail).then(done);
+    });
+
+    it('does not match original name of mapped region column names', function(done) {
+        csvItem.updateFromJson({
+            data: 'lga_code,value\n31000,1',
+            tableStyle: {
+                columns: {
+                    'lga_code': {
+                        name: 'something else'
+                    }
+                }
+            }
+        });
+        csvItem.load().then(function() {
+            expect(csvItem.regionMapping).not.toBeDefined();
         }).otherwise(fail).then(done);
     });
 
@@ -811,8 +935,7 @@ describe('CsvCatalogItem with region mapping', function() {
             var regionDetails = csvItem.regionMapping.regionDetails;
             expect(regionDetails).toBeDefined();
             var regionDetail = regionDetails[0];
-            expect(regionDetail.disambigColumn).toBeDefined();
-            expect(regionDetail.disambigColumn.name).toEqual('State');
+            expect(regionDetail.disambigColumnName).toEqual('State');
             // The following test is much more rigorous.
         }).otherwise(fail).then(done);
     });
@@ -839,6 +962,34 @@ describe('CsvCatalogItem with region mapping', function() {
 
             expect(recolorFunction(regionNames.indexOf('3121'))).toBeDefined();
             expect(recolorFunction(regionNames.indexOf('3122'))).toBeDefined();
+            expect(recolorFunction(regionNames.indexOf('3123'))).not.toBeDefined();
+            expect(recolorFunction(regionNames.indexOf('3124'))).not.toBeDefined();
+            expect(csvItem.legendUrl).toBeDefined();
+        }).otherwise(fail).then(done);
+    });
+
+    it('supports region-mapped files with missing dates', function(done) {
+        csvItem.updateFromJson({
+            url: 'test/csv/postcode_date_value_missing_date.csv'
+        });
+        csvItem.load().then(function() {
+            var regionMapping = csvItem.regionMapping;
+            var j = JulianDate.fromIso8601;
+            regionMapping._catalogItem.terria.clock.currentTime = j('2015-08-08');
+            csvItem.isEnabled = true;
+            var regionDetails = regionMapping.regionDetails;
+            expect(regionDetails).toBeDefined();
+            var regionDetail = regionDetails[0];
+            expect(csvItem.tableStructure.columns[0].values.length).toEqual(10);
+            expect(csvItem.tableStructure.columnsByType[VarType.TIME].length).toEqual(1);
+            expect(csvItem.tableStructure.columnsByType[VarType.TIME][0].julianDates[0]).toEqual(j('2015-08-07'));
+            // Test that the right regions have been colored (since the datasource doesn't expose the entities).
+            // On 2015-08-07, only postcodes 3121 and 3122 have values. On neighboring dates, so do 3123 and 3124.
+            var recolorFunction = ImageryProviderHooks.addRecolorFunc.calls.argsFor(0)[1];
+            var regionNames = regionDetail.regionProvider.regions.map(getId);
+
+            expect(recolorFunction(regionNames.indexOf('3121'))).toBeDefined();
+            expect(recolorFunction(regionNames.indexOf('3122'))).not.toBeDefined();  // This one was eliminated.
             expect(recolorFunction(regionNames.indexOf('3123'))).not.toBeDefined();
             expect(recolorFunction(regionNames.indexOf('3124'))).not.toBeDefined();
             expect(csvItem.legendUrl).toBeDefined();
@@ -874,15 +1025,49 @@ describe('CsvCatalogItem with region mapping', function() {
         }).otherwise(fail).then(done);
     });
 
-    it('replaces enum tail with "Other" in the legend', function(done) {
+    it('replaces enum tail with "X other values" in the legend', function(done) {
         csvItem.url = 'test/csv/postcode_enum_lots.csv';
         csvItem._tableStyle = new TableStyle({colorBins: 9});
         csvItem.load().then(function() {
             expect(csvItem.legendUrl).toBeDefined();
             var url = csvItem.legendUrl.url;
-            expect(url).toContain('Other');
+            expect(url).toContain('2 other values');
             expect(url).not.toContain('unicorns');
             expect(url).toContain('guinea pigs');
+        }).otherwise(fail).then(done);
+    });
+
+    it('honors colorBins property when it is less than the number of colors in the palette', function(done) {
+        csvItem.url = 'test/csv/postcode_enum_lots.csv';
+        csvItem._tableStyle = new TableStyle({colorBins: 3});
+        csvItem.load().then(function() {
+            expect(csvItem.legendUrl).toBeDefined();
+            var url = csvItem.legendUrl.url;
+            expect(url).toContain('8 other values');
+            expect(url).toContain('cats');
+            expect(url).toContain('dogs');
+        }).otherwise(fail).then(done);
+    });
+
+    it('displays a "XX values" legend when colorBinMethod=cycle and there are more unique values than color bins', function(done) {
+        csvItem.url = 'test/csv/postcode_enum_lots.csv';
+        csvItem._tableStyle = new TableStyle({colorBins: 9, colorBinMethod: 'cycle'});
+        csvItem.load().then(function() {
+            expect(csvItem.legendUrl).toBeDefined();
+            var url = csvItem.legendUrl.url;
+            expect(url).toContain('10 values');
+            expect(url).not.toContain('dogs');
+        }).otherwise(fail).then(done);
+    });
+
+    it('displays a normal legend when colorBinMethod=cycle but there are less unique values than color bins', function(done) {
+        csvItem.url = 'test/csv/postcode_enum_lots.csv';
+        csvItem._tableStyle = new TableStyle({colorBins: 15, colorBinMethod: 'cycle'});
+        csvItem.load().then(function() {
+            expect(csvItem.legendUrl).toBeDefined();
+            var url = csvItem.legendUrl.url;
+            expect(url).not.toContain('values');
+            expect(url).toContain('dogs');
         }).otherwise(fail).then(done);
     });
 
@@ -978,7 +1163,7 @@ describe('CsvCatalogItem with region mapping', function() {
                 csvFile,
                 terria.configParameters.regionMappingDefinitionsUrl,
                 'data/regionids/region_map-FID_LGA_2011_AUST_LGA_NAME11.json',
-                'data/regionids/region_map-FID_LGA_2011_AUST_STE_NAME11.json'
+                'data/regionids/region_map-FID_LGA_2011_AUST_STE_NAME11.json',
             ]).then(function(resources) {
                 jasmine.Ajax.stubRequest('http://regionmap-dev.nationalmap.nicta.com.au/region_map/ows?transparent=true&format=image%2Fpng&exceptions=application%2Fvnd.ogc.se_xml&styles=&tiled=true&service=WMS&version=1.1.1&request=GetFeatureInfo&layers=region_map%3AFID_LGA_2011_AUST&srs=EPSG%3A3857&bbox=16143500.373829227%2C-4559315.8631541915%2C16153284.31344973%2C-4549531.923533689&width=256&height=256&query_layers=region_map%3AFID_LGA_2011_AUST&x=217&y=199&info_format=application%2Fjson').andReturn({
                     responseText: JSON.stringify({
@@ -1030,10 +1215,12 @@ describe('CsvCatalogItem with region mapping', function() {
 
         it('works with disambiguated LGA names like Wellington, VIC', function(done) {
             var csvFile = 'test/csv/lga_state_disambig.csv';
-
             loadAndStubTextResources(done, [
                 csvFile,
-                terria.configParameters.regionMappingDefinitionsUrl
+                terria.configParameters.regionMappingDefinitionsUrl,
+                'data/regionids/region_map-FID_LGA_2011_AUST_LGA_NAME11.json',
+                'data/regionids/region_map-FID_LGA_2011_AUST_STE_NAME11.json',
+                'data/regionids/region_map-FID_STE_2011_AUST_STE_NAME11.json'
             ]).then(function(resources) {
                 jasmine.Ajax.stubRequest('http://regionmap-dev.nationalmap.nicta.com.au/region_map/ows?transparent=true&format=image%2Fpng&exceptions=application%2Fvnd.ogc.se_xml&styles=&tiled=true&service=WMS&version=1.1.1&request=GetFeatureInfo&layers=region_map%3AFID_LGA_2011_AUST&srs=EPSG%3A3857&bbox=16437018.562444303%2C-3913575.8482010253%2C16593561.59637234%2C-3757032.814272985&width=256&height=256&query_layers=region_map%3AFID_LGA_2011_AUST&x=249&y=135&info_format=application%2Fjson').andReturn({
                     responseText: JSON.stringify({
@@ -1161,6 +1348,35 @@ describe('CsvCatalogItem with region mapping', function() {
                 }).otherwise(fail).then(done);
             });
         });
+    });
+
+});
+
+describe('CsvCatalogItem with no geo', function() {
+
+    var terria;
+    var csvItem;
+    beforeEach(function() {
+        terria = new Terria({
+            baseUrl: './'
+        });
+        csvItem = new CsvCatalogItem(terria);
+    });
+
+    it('is not mappable', function(done) {
+        csvItem.url = 'test/csv_nongeo/xy.csv';
+        csvItem.load().then(function() {
+            expect(csvItem.isMappable).toEqual(false);
+            expect(csvItem.regionMapping).toBeUndefined();
+        }).otherwise(fail).then(done);
+    });
+
+    it('interprets height column as non-geo', function(done) {
+        csvItem.url = 'test/csv_nongeo/x_height.csv';
+        csvItem.load().then(function() {
+            expect(csvItem.isMappable).toBe(false);
+            expect(csvItem.tableStructure.columnsByType[VarType.ALT].length).toEqual(0);
+        }).otherwise(fail).then(done);
     });
 
 });

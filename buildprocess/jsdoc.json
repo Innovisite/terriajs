@@ -4,7 +4,7 @@
         "dictionaries": ["jsdoc","closure"]
     },
     "source": {
-        "includePattern": ".+\\.((js(doc)?)|png)$",
+        "includePattern": ".+\\.((js(doc)?))$",
         "excludePattern": "((^|\\/|\\\\)_)|(^ThirdParty/)"
     },
     "plugins": [
@@ -22,7 +22,7 @@
     "opts": {
         "recurse": true,
         "encoding": "utf8",
-        "destination": "./wwwroot/doc/",
+        "destination": "./wwwroot/doc/reference/",
         "tutorials": "./tutorials/"
     }
  }

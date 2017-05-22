@@ -2,7 +2,9 @@
 TerriaJS
 ============
 
-[![Join the chat at https://gitter.im/TerriaJS/terriajs](https://badges.gitter.im/TerriaJS/terriajs.svg)](https://gitter.im/TerriaJS/terriajs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/TerriaJS/terriajs.svg?branch=master)](https://travis-ci.org/TerriaJS/terriajs)
+[![Greenkeeper badge](https://badges.greenkeeper.io/TerriaJS/terriajs.svg)](https://greenkeeper.io/)
+
+[![Join the chat at https://gitter.im/TerriaJS/terriajs](https://badges.gitter.im/TerriaJS/terriajs.svg)](https://gitter.im/TerriaJS/terriajs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/TerriaJS/terriajs.svg?branch=master)](https://travis-ci.org/TerriaJS/terriajs) [![Docs](https://img.shields.io/badge/docs-online-blue.svg)](http://terria.io/Documentation)
 
 ![Terria logo](terria-logo.png "Terria logo")
 
@@ -18,10 +20,43 @@ TerriaJS is a library for building rich, web-based geospatial data explorers, us
 * Time dimensions supported for CSV, CZML, WMS. Automatically animate layers, or slide the time control forward and backward.
 * Drag-and-drop files from your desktop the browser, for instant visualisation (no file upload to server required).
 * Wider range of file types supported through server-side OGR2OGR service (requires upload).
-* All ASGS region types (LGA, SA2, commonwealth electoral district etc) supported for [CSV region mapping](https://github.com/NICTA/nationalmap/wiki/csv-geo-au), plus several others: Primary Health Networks, Statistical Local Areas, ISO 3 letter country codes, etc.
+* All ASGS (Australian Statistical Geographic Standard) region types (LGA, SA2, commonwealth electoral district etc) supported for [CSV region mapping](https://github.com/NICTA/nationalmap/wiki/csv-geo-au), plus several others: Primary Health Networks, Statistical Local Areas, ISO 3 letter country codes, etc.
 * Users can generate a reusable URL link of their current map view, to quickly share mashups of web-hosted data. Google's URL shortener is optionally used.
 
 ![Terria screenshot](terria-screenshot.png "Terria screenshot")
+
+### Who's using TerriaJS?
+
+#### Sites developed by Data61
+
+* [National Map](http://nationalmap.gov.au)
+* [AREMI](http://nationalmap.gov.au/renewables)
+* [Northern Australia Investment Map](http://nationalmap.gov.au/northernaustralia)
+* [NEII Viewer](http://neii.org.au/viewer)
+* [Global Risk Map](http://globalriskmap.nicta.com.au)
+* [Ground Water Visualisation System](http://groundwater-vis.research.nicta.com.au/)
+
+#### Prototypes and sites in development
+
+* [ParlMap](http://parlmap.terria.io/) (authorisation required)
+* [City of Sydney data explorer](http://data.cityofsydney.nsw.gov.au/map)
+* [GeoGLAM Rangeland and Pasture Productivity](http://map.geo-rapp.org/)
+* [Greater Sydney Commission](http://nationalmap.research.nicta.com.au/greatersydney/)
+
+#### Not Data61
+
+Sites we're aware of that are using TerriaJS. These are not endorsements or testimonials.
+
+* [AURIN Map](http://map.aurin.org.au/)
+* [WA Map](http://map.beta.data.wa.gov.au/)
+* [Australian Wave Energy Atlas](http://awavea.csiro.au/)
+* [Leylines](http://maps.leylines.ch/)
+* [PropellerAero](http://www.propelleraero.com/)
+* [Tampa Bay Map](http://tampabaymap.org/)
+* [Latin America Map](http://www.latam-map.org/) 
+* [USGS Protected Areas database](https://maps.usgs.gov/beta/padus/) (beta)
+* [Map-N-Tour](http://mapntour.squarespace.com/news/?tag=3D+Map+Platforms)
+* [Innovisite France Beta](http://www.innovisite.com/map/france/)
 
 ### Technical
 
@@ -50,7 +85,7 @@ More information: [Deploying your own Terria Map](https://github.com/NICTA/natio
 
 Documentation about working with Terria and developing it is at http://terria.io/Documentation
 
-JavaScript documentation is at http://nationalmap.gov.au/build/TerriaJS/doc
+JavaScript documentation is at http://nationalmap.gov.au/build/TerriaJS/doc/reference
 
 ### Components and naming
 
@@ -81,10 +116,18 @@ TerriaJS is composed of a number of CommonJS modules, making it easy to incorpor
 
 The entire process can be easily automated using [gulp](http://gulpjs.com/).  See TerriaMap's [gulpfile.js](https://github.com/TerriaJS/TerriaMap/blob/master/gulpfile.js) for an example.
 
-[index.js](https://github.com/NICTA/nationalmap/blob/master/index.js) requires-in various TerriaJS components and initializes the user interface.
+[index.js](https://github.com/TerriaJS/TerriaMap/blob/master/index.js) requires-in various TerriaJS components and initializes the user interface.
 
 [index.less](https://github.com/NICTA/nationalmap/blob/master/index.less) customizes various aspects of the appearance and `@import`s the less files for the TerriaJS components that the application uses.
 
 All assets in `node_modules/terriajs/wwwroot` should be copied to `[your app's web root directory]/build/TerriaJS`.
 
 We'd like to thank these awesome online services that provide us with free accounts for our open source work!  [BrowserStack](https://www.browserstack.com), [Sauce Labs](https://saucelabs.com/), [Travis CI](https://travis-ci.org/)
+
+### Join the community
+
+Get in touch!
+
+* Chat in our [Gitter chat room](https://gitter.im/TerriaJS/terriajs)
+* Join the [TerriaJS Google Group](https://groups.google.com/forum/#!forum/terriajs)
+* Raise issues in the [Github issue tracker](https://github.com/TerriaJS/TerriaJS)
